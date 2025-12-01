@@ -1,0 +1,89 @@
+import java.util.Scanner;
+
+public class NQueen {
+
+    // Size of board will be given by user
+    int N;
+
+    // Constructor to set N based on user input
+    public NQueen(int n) {
+        this.N = n;
+    }
+
+    // Check if a queen can be placed on board[row][col]
+    boolean isSafe(int board[][], int row, int col) {
+
+        // Check this row on the left side
+        for (int i = 0; i < col; i++)
+            if (board[row][i] == 1)
+                return false;
+
+        // Check upper diagonal on the left side
+        for (int i = row, j = col; i >= 0 && j >= 0; i--, j--)
+            if (board[i][j] == 1)
+                return false;
+
+        // Check lower diagonal on the left side
+        for (int i = row, j = col; j >= 0 && i < N; i++, j--)
+            if (board[i][j] == 1)
+                return false;
+
+        return true;  // Safe spot
+    }
+
+    // Recursive function to solve the problem
+    boolean solveNQUtil(int board[][], int col) {
+
+        if (col >= N)
+            return true; // All queens placed
+
+        for (int i = 0; i < N; i++) {
+            if (isSafe(board, i, col)) {
+                board[i][col] = 1;
+
+                // Place rest of the queens
+                if (solveNQUtil(board, col + 1))
+                    return true;
+
+                // Backtrack
+                board[i][col] = 0;
+            }
+        }
+        return false; // No solution
+    }
+
+    // Print the board
+    void printSolution(int board[][]) {
+        System.out.println("\nSolution for " + N + " x " + N + " board:");
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++)
+                System.out.print(" " + board[i][j] + " ");
+            System.out.println();
+        }
+    }
+
+    // Solve function
+    void solveNQ() {
+        int board[][] = new int[N][N];
+
+        if (!solveNQUtil(board, 0)) {
+            System.out.println(" No solution exists for N = " + N);
+            return;
+        }
+
+        printSolution(board);
+    }
+
+    // Main function
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the size of N (Chess board NxN): ");
+        int n = sc.nextInt();
+
+        NQueen nq = new NQueen(n);
+        nq.solveNQ();
+
+        sc.close();
+    }
+}

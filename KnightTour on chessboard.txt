@@ -1,0 +1,74 @@
+import java.util.Scanner;
+
+public class KnightsTour {
+
+    static int N;
+
+    static boolean isSafe(int x, int y, int sol[][]) {
+        return (x >= 0 && x < N && y >= 0 && y < N && sol[x][y] == -1);
+    }
+
+    static void printSolution(int sol[][]) {
+        for (int x = 0; x < N; x++) {
+            for (int y = 0; y < N; y++)
+                System.out.print(sol[x][y] + "\t");
+            System.out.println();
+        }
+    }
+
+    static boolean solveKTUtil(int x, int y, int movei, int sol[][], int xMove[], int yMove[]) {
+        int k, next_x, next_y;
+
+        if (movei == N * N)
+            return true;
+
+        for (k = 0; k < 8; k++) {
+            next_x = x + xMove[k];
+            next_y = y + yMove[k];
+            if (isSafe(next_x, next_y, sol)) {
+                sol[next_x][next_y] = movei;
+                if (solveKTUtil(next_x, next_y, movei + 1, sol, xMove, yMove))
+                    return true;
+                else
+                    sol[next_x][next_y] = -1;  // backtrack
+            }
+        }
+
+        return false;
+    }
+
+    static void solveKT(int startX, int startY) {
+
+        int sol[][] = new int[N][N];
+
+        for (int x = 0; x < N; x++)
+            for (int y = 0; y < N; y++)
+                sol[x][y] = -1;
+
+        // Possible movements of the Knight
+        int xMove[] = {2, 1, -1, -2, -2, -1, 1, 2};
+        int yMove[] = {1, 2, 2, 1, -1, -2, -2, -1};
+
+        sol[startX][startY] = 0;  // Knight starts here!
+
+        if (!solveKTUtil(startX, startY, 1, sol, xMove, yMove))
+            System.out.println("No solution exists for this board size.");
+        else
+            printSolution(sol);
+    }
+
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter value for N (size of chessboard): ");
+        N = sc.nextInt();
+
+        System.out.print("Enter starting X (row): ");
+        int startX = sc.nextInt();
+
+        System.out.print("Enter starting Y (column): ");
+        int startY = sc.nextInt();
+
+        solveKT(startX, startY);
+    }
+}
